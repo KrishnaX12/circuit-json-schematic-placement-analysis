@@ -1,4 +1,4 @@
-<svg width="1200" height="988" viewBox="0 0 1200 988" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="schematic analysis fixture">
+<svg width="1200" height="1076" viewBox="0 0 1200 1076" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="schematic analysis fixture">
   <g transform="translate(0, 0)">
     <style>
               .boundary { fill: rgb(245, 241, 237); }
@@ -25,6 +25,10 @@
     <tspan x="18" dy="22">  height=&quot;0.6&quot; /&gt;</tspan>
     <tspan x="18" dy="22">&lt;/SchematicBoxPositions&gt;</tspan>
     <tspan x="18" dy="22">&lt;SchematicPlacementIssues&gt;</tspan>
+    <tspan x="18" dy="22">&lt;TwoPinPullupPowerBelowSignal componentName=&quot;R1&quot; railPin=&quot;pin1&quot; railType=&quot;power&quot;</tspan>
+    <tspan x="18" dy="22">  deltaSchRotation=&quot;180&quot; suggestedRailFacingDirection=&quot;up&quot; message=&quot;rotate R1 by 180° so its</tspan>
+    <tspan x="18" dy="22">  power-connected terminal is above its signal terminal; preserve pin connections and reroute</tspan>
+    <tspan x="18" dy="22">  attached traces&quot; /&gt;</tspan>
     <tspan x="18" dy="22">&lt;PullResistorOnWrongSide resistorName=&quot;R1&quot; hostName=&quot;U1&quot; signalPin=&quot;RESET_N&quot; pullDirection=&quot;up&quot;</tspan>
     <tspan x="18" dy="22">  preferredSide=&quot;above&quot; signalSchY=&quot;0.1&quot; wrongSideGap=&quot;2.8&quot; message=&quot;consider placing R1 above</tspan>
     <tspan x="18" dy="22">  U1.RESET_N so the pull-up branch reads toward power&quot; /&gt;</tspan>

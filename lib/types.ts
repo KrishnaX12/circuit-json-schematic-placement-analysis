@@ -256,6 +256,15 @@ export interface TwoPinComponentHasInvertedRails
   suggestedRailFacingDirection: "up"
 }
 
+/** A vertical pull-up resistor has its power terminal below its signal terminal. */
+export interface TwoPinPullupPowerBelowSignal
+  extends TwoPinComponentRailOrientation {
+  lineItemType: "TwoPinPullupPowerBelowSignal"
+  railType: "power"
+  deltaSchRotation: 180
+  suggestedRailFacingDirection: "up"
+}
+
 export interface ComponentNetLabelCollision {
   lineItemType: "ComponentNetLabelCollision"
   firstComponent: SchematicBoxPlacement
@@ -484,6 +493,7 @@ export type SchematicPlacementIssue =
   | PullResistorOnWrongSide
   | TwoPinComponentShouldBeVertical
   | TwoPinComponentHasInvertedRails
+  | TwoPinPullupPowerBelowSignal
   | ComponentNetLabelCollision
   | ComponentBoxNetLabelCollision
   | NetLabelCollision

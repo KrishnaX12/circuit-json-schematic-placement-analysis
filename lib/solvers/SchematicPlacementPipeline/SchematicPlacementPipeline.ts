@@ -69,6 +69,7 @@ const solversByIssueType = {
   TwoPinComponentCouldBeFlipped: [TwoPinComponentOrientationSolver],
   TwoPinComponentShouldBeVertical: [TwoPinComponentRailOrientationSolver],
   TwoPinComponentHasInvertedRails: [TwoPinComponentRailOrientationSolver],
+  TwoPinPullupPowerBelowSignal: [TwoPinComponentRailOrientationSolver],
   DecouplingCapacitorsNotCloseTogether: [DecouplingCapacitorGroupingSolver],
   ConnectorPositionCausesTraceDetours: [ConnectorPlacementSolver],
   LowSideTransistorNotAlignedWithLoad: [LowSideTransistorPlacementSolver],

@@ -101,6 +101,7 @@ export class SchematicPlacementAnalysis {
       TwoPinComponentCouldBeFlipped: 0,
       TwoPinComponentShouldBeVertical: 0,
       TwoPinComponentHasInvertedRails: 0,
+      TwoPinPullupPowerBelowSignal: 0,
       DecouplingCapacitorsNotCloseTogether: 0,
       ConnectorPositionCausesTraceDetours: 0,
       LowSideTransistorNotAlignedWithLoad: 0,
@@ -166,6 +167,7 @@ export class SchematicPlacementAnalysis {
         return FeedbackNetworkPlacementSolver.issueToString(issue)
       case "TwoPinComponentShouldBeVertical":
       case "TwoPinComponentHasInvertedRails":
+      case "TwoPinPullupPowerBelowSignal":
         return TwoPinComponentRailOrientationSolver.issueToString(issue)
       case "PullResistorOnWrongSide":
         return PullResistorPlacementSolver.issueToString(issue)

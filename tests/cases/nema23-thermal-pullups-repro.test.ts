@@ -34,22 +34,12 @@ test("records inverted I2C pull-ups on the published NEMA23 thermal sheet", () =
     expect(power.center.x).toBeCloseTo(signal.center.x)
     expect(power.center.y).toBeLessThan(signal.center.y)
   }
-  const issueTypes = [
-    "TwoPinComponentShouldBeVertical",
-    "TwoPinComponentHasInvertedRails",
-  ] as const
+  const issueTypes = ["TwoPinPullupPowerBelowSignal"] as const
   const analysis = analyzeSchematicPlacement(circuitJson)
-  const orientation = analysis.getIssues({ issueTypes })
-  expect(
-    orientation.some(
-      (issue) =>
-        (issue.lineItemType === "TwoPinComponentShouldBeVertical" ||
-          issue.lineItemType === "TwoPinComponentHasInvertedRails") &&
-        ["R_SDA", "R_SCL"].includes(
-          issue.schematicBox.sourceComponentName ?? "",
-        ),
-    ),
-  ).toBe(false)
+  expect(analysis.getIssues({ issueTypes })).toMatchObject([
+    { schematicBox: { sourceComponentName: "R_SDA" }, deltaSchRotation: 180 },
+    { schematicBox: { sourceComponentName: "R_SCL" }, deltaSchRotation: 180 },
+  ])
   expect(
     createIssueReproSnapshot({
       circuitJson,
@@ -57,7 +47,7 @@ test("records inverted I2C pull-ups on the published NEMA23 thermal sheet", () =
       issueTypes,
       schematicSheetId: "schematic_sheet_4",
       showFullSchematic: true,
-      showOverlay: false,
+      showOverlay: true,
       width: 1500,
       height: 850,
     }),

@@ -2,6 +2,7 @@ import { BaseSolver } from "@tscircuit/solver-utils"
 import type {
   TwoPinComponentShouldBeVertical,
   TwoPinComponentHasInvertedRails,
+  TwoPinPullupPowerBelowSignal,
   SchematicPlacementIssue,
 } from "../../types"
 import { addAttr } from "../../utils/format"
@@ -134,6 +135,38 @@ export class TwoPinComponentRailOrientationSolver extends BaseSolver {
       return
     }
 
+    const signalNet = index.connected(otherSourcePort.source_port_id)
+    const powerBelowSignal =
+      sourceComponent?.ftype === "simple_resistor" &&
+      Number.isFinite(sourceComponent.resistance) &&
+      sourceComponent.resistance > 0 &&
+      railType === "power" &&
+      this.isPullupSignal(signalNet, id) &&
+      !sourcePorts.some((port) => port.do_not_connect) &&
+      !this.powerNets.has(signalNet) &&
+      !this.groundNets.has(signalNet) &&
+      railPort.schematic_sheet_id === component.schematicSheetId &&
+      otherPort.schematic_sheet_id === component.schematicSheetId &&
+      Math.abs(railPort.center.x - otherPort.center.x) <=
+        TwoPinComponentRailOrientationSolver.EPSILON &&
+      railPort.center.y <
+        otherPort.center.y - TwoPinComponentRailOrientationSolver.EPSILON &&
+      railPort.facing_direction === "down" &&
+      otherPort.facing_direction === "up"
+    if (powerBelowSignal) {
+      this.issues.push({
+        lineItemType: "TwoPinPullupPowerBelowSignal",
+        schematicBox: component,
+        railSourcePortId: railSourcePort.source_port_id,
+        railPinName: railSourcePort.name,
+        railType: "power",
+        deltaSchRotation: 180,
+        suggestedRailFacingDirection: "up",
+        message: `rotate ${component.sourceComponentName ?? id} by 180° so its power-connected terminal is above its signal terminal; preserve pin connections and reroute attached traces`,
+      })
+      return
+    }
+
     const horizontal =
       Math.abs(railPort.center.y - otherPort.center.y) <=
         TwoPinComponentRailOrientationSolver.EPSILON &&
@@ -161,8 +194,45 @@ export class TwoPinComponentRailOrientationSolver extends BaseSolver {
     })
   }
 
+  private isPullupSignal(signalNet: string, resistorId: string): boolean {
+    const peers = this.index.portsByNet.get(signalNet) ?? []
+    if (peers.some((port) => port.needs_external_pulldown)) return false
+    return peers.some((port) => {
+      if (port.source_component_id === resistorId || port.do_not_connect)
+        return false
+      if (port.needs_external_pullup) return true
+      // Older exports may omit pull requirements. Recognize explicit I2C pin
+      // roles, never infer a pull-up from a resistor touching a supply alone.
+      const hostId = port.source_component_id
+      if (this.index.components.get(hostId)?.ftype !== "simple_chip")
+        return false
+      const sda = this.index.namedPort(hostId, "SDA")
+      const scl = this.index.namedPort(hostId, "SCL")
+      if (
+        !sda ||
+        !scl ||
+        sda === scl ||
+        sda.do_not_connect ||
+        scl.do_not_connect
+      )
+        return false
+      if (port !== sda && port !== scl) return false
+      const sdaNet = this.index.connected(sda.source_port_id)
+      const sclNet = this.index.connected(scl.source_port_id)
+      return (
+        sdaNet !== sclNet &&
+        [sdaNet, sclNet].every(
+          (net) => !this.powerNets.has(net) && !this.groundNets.has(net),
+        )
+      )
+    })
+  }
+
   static issueToString(
-    issue: TwoPinComponentShouldBeVertical | TwoPinComponentHasInvertedRails,
+    issue:
+      | TwoPinComponentShouldBeVertical
+      | TwoPinComponentHasInvertedRails
+      | TwoPinPullupPowerBelowSignal,
   ): string {
     const attrs: string[] = []
     addAttr(attrs, "componentName", issue.schematicBox.sourceComponentName)
