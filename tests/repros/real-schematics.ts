@@ -4,6 +4,7 @@ import { wirelessMouseControllerSheetCircuitJson } from "../assets/wireless-mous
 import { wirelessMouseSensorSheetCircuitJson } from "../assets/wireless-mouse-sensor-sheet"
 import { trellisCoreCircuitJson } from "../assets/trellis-core"
 import acousticGuitarTunerCircuitJson from "../assets/acoustic-guitar-tuner.circuit.json"
+import rp2040MotorControllerCircuitJson from "../assets/rp2040-motor-controller.circuit.json"
 
 // Reuse the checked-in complete sheet imports without moving components or adding errors.
 export const realSchematics: {
@@ -31,5 +32,9 @@ export const realSchematics: {
   {
     name: "Trellis Core — all five sheets (v0.2.9)",
     circuitJson: trellisCoreCircuitJson,
+  },
+  {
+    name: "RP2040 motor controller — full-sheet crop repro",
+    circuitJson: rp2040MotorControllerCircuitJson as CircuitJson,
   },
 ]
